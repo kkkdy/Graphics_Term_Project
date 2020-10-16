@@ -1,6 +1,7 @@
 var gl;
 var points;
-var direction = true;
+var dog_direction = true;
+var cat_direction = false;
 window.onload = function init()
 {
     var canvas = document.getElementById( "gl-canvas" );
@@ -352,19 +353,27 @@ window.onload = function init()
     
     var program = initShaders( gl, "vertex-shader", "fragment-shader" );
     gl.useProgram( program );
+	
+	
+    // Associate out shader variables with our data buffer
+    
+    var vPosition = gl.getAttribLocation( program, "vPosition" );
+    var vColor = gl.getAttribLocation( program, "vColor" );
     
     // Load the data into the GPU
     
    ///////////////////////////////////////////////////////////////////
     
+	
+	    
+    /*-----------------------------------------------------------------------*/
+	/* Sky ------------------------------------------------------------------*/
+	/*-----------------------------------------------------------------------*/
+	
+	
     var skyBufferId = gl.createBuffer();
     gl.bindBuffer( gl.ARRAY_BUFFER, skyBufferId );
     gl.bufferData( gl.ARRAY_BUFFER,flatten(skyVertices), gl.STATIC_DRAW );
-
-    // Associate out shader variables with our data buffer
-    
-    var vPosition = gl.getAttribLocation( program, "vPosition" );
-    var vColor = gl.getAttribLocation( program, "vColor" );
     
     // Draw the triangle
     
@@ -374,14 +383,6 @@ window.onload = function init()
     gl.disableVertexAttribArray(vColor);
     gl.vertexAttrib4f(vColor, 0.1, 0.07, 0.2, 0.95);
     gl.drawArrays(gl.TRIANGLES, 0, 6);
-    
-    /*-----------------------------------------------------------------------*/
-	/* Sky ------------------------------------------------------------------*/
-	/*-----------------------------------------------------------------------*/
-    
-    var skyBufferId = gl.createBuffer();
-    gl.bindBuffer( gl.ARRAY_BUFFER, skyBufferId );
-    gl.bufferData( gl.ARRAY_BUFFER,flatten(skyVertices), gl.STATIC_DRAW );
     
     var skyColorBufferId = gl.createBuffer();
     gl.bindBuffer( gl.ARRAY_BUFFER, skyColorBufferId );
@@ -409,11 +410,6 @@ window.onload = function init()
     var mountain1BufferId = gl.createBuffer();
     gl.bindBuffer( gl.ARRAY_BUFFER, mountain1BufferId );
     gl.bufferData( gl.ARRAY_BUFFER,flatten(mountain1Vertices), gl.STATIC_DRAW );
-
-    // Associate out shader variables with our data buffer
-    
-    var vPosition = gl.getAttribLocation( program, "vPosition" );
-    var vColor = gl.getAttribLocation( program, "vColor" );
     
     // Draw the triangle
     
@@ -431,9 +427,6 @@ window.onload = function init()
     gl.bufferData( gl.ARRAY_BUFFER,flatten(mountain2Vertices), gl.STATIC_DRAW );
 
     // Associate out shader variables with our data buffer
-    
-    var vPosition = gl.getAttribLocation( program, "vPosition" );
-    var vColor = gl.getAttribLocation( program, "vColor" );
     
     // Draw the triangle
     
@@ -455,13 +448,7 @@ window.onload = function init()
     gl.bindBuffer( gl.ARRAY_BUFFER, building1BufferId );
     gl.bufferData( gl.ARRAY_BUFFER,flatten(building1Vertices), gl.STATIC_DRAW );
 
-    // Associate out shader variables with our data buffer
-    
-    var vPosition = gl.getAttribLocation( program, "vPosition" );
-    var vColor = gl.getAttribLocation( program, "vColor" );
-    
     // Draw the square
-    
     gl.bindBuffer( gl.ARRAY_BUFFER, building1BufferId);
     gl.vertexAttribPointer( vPosition, 2, gl.FLOAT, false, 0, 0 );
     gl.enableVertexAttribArray( vPosition );
@@ -475,14 +462,9 @@ window.onload = function init()
     var building2BufferId = gl.createBuffer();
     gl.bindBuffer( gl.ARRAY_BUFFER, building2BufferId );
     gl.bufferData( gl.ARRAY_BUFFER,flatten(building2Vertices), gl.STATIC_DRAW );
-
-    // Associate out shader variables with our data buffer
-    
-    var vPosition = gl.getAttribLocation( program, "vPosition" );
-    var vColor = gl.getAttribLocation( program, "vColor" );
     
     // Draw the square
-    
+ 
     gl.bindBuffer( gl.ARRAY_BUFFER, building2BufferId);
     gl.vertexAttribPointer( vPosition, 2, gl.FLOAT, false, 0, 0 );
     gl.enableVertexAttribArray( vPosition );
@@ -496,11 +478,6 @@ window.onload = function init()
     var building3BufferId = gl.createBuffer();
     gl.bindBuffer( gl.ARRAY_BUFFER, building3BufferId );
     gl.bufferData( gl.ARRAY_BUFFER,flatten(building3Vertices), gl.STATIC_DRAW );
-
-    // Associate out shader variables with our data buffer
-    
-    var vPosition = gl.getAttribLocation( program, "vPosition" );
-    var vColor = gl.getAttribLocation( program, "vColor" );
     
     // Draw the square
     
@@ -517,11 +494,6 @@ window.onload = function init()
     var building4BufferId = gl.createBuffer();
     gl.bindBuffer( gl.ARRAY_BUFFER, building4BufferId );
     gl.bufferData( gl.ARRAY_BUFFER,flatten(building4Vertices), gl.STATIC_DRAW );
-
-    // Associate out shader variables with our data buffer
-    
-    var vPosition = gl.getAttribLocation( program, "vPosition" );
-    var vColor = gl.getAttribLocation( program, "vColor" );
     
     // Draw the square
     
@@ -538,11 +510,6 @@ window.onload = function init()
     var building5BufferId = gl.createBuffer();
     gl.bindBuffer( gl.ARRAY_BUFFER, building5BufferId );
     gl.bufferData( gl.ARRAY_BUFFER,flatten(building5Vertices), gl.STATIC_DRAW );
-
-    // Associate out shader variables with our data buffer
-    
-    var vPosition = gl.getAttribLocation( program, "vPosition" );
-    var vColor = gl.getAttribLocation( program, "vColor" );
     
     // Draw the square
     
@@ -559,11 +526,6 @@ window.onload = function init()
     var building6BufferId = gl.createBuffer();
     gl.bindBuffer( gl.ARRAY_BUFFER, building6BufferId );
     gl.bufferData( gl.ARRAY_BUFFER,flatten(building6Vertices), gl.STATIC_DRAW );
-
-    // Associate out shader variables with our data buffer
-    
-    var vPosition = gl.getAttribLocation( program, "vPosition" );
-    var vColor = gl.getAttribLocation( program, "vColor" );
     
     // Draw the square
     
@@ -580,11 +542,6 @@ window.onload = function init()
     var building7BufferId = gl.createBuffer();
     gl.bindBuffer( gl.ARRAY_BUFFER, building7BufferId );
     gl.bufferData( gl.ARRAY_BUFFER,flatten(building7Vertices), gl.STATIC_DRAW );
-
-    // Associate out shader variables with our data buffer
-    
-    var vPosition = gl.getAttribLocation( program, "vPosition" );
-    var vColor = gl.getAttribLocation( program, "vColor" );
     
     // Draw the square
     
@@ -601,11 +558,6 @@ window.onload = function init()
     var building8BufferId = gl.createBuffer();
     gl.bindBuffer( gl.ARRAY_BUFFER, building8BufferId );
     gl.bufferData( gl.ARRAY_BUFFER,flatten(building8Vertices), gl.STATIC_DRAW );
-
-    // Associate out shader variables with our data buffer
-    
-    var vPosition = gl.getAttribLocation( program, "vPosition" );
-    var vColor = gl.getAttribLocation( program, "vColor" );
     
     // Draw the square
     
@@ -615,6 +567,7 @@ window.onload = function init()
     gl.disableVertexAttribArray(vColor);
     gl.vertexAttrib4f(vColor, 0.0, 0.0, 0.0, 0.85);
     gl.drawArrays(gl.TRIANGLES, 0, 6);
+	
     //////////[End Mountain Drawing]//////////////////////////////////
     //////////////////////////////////////////////////////////////////
    
@@ -628,11 +581,6 @@ window.onload = function init()
     var window1BufferId = gl.createBuffer();
     gl.bindBuffer( gl.ARRAY_BUFFER, window1BufferId );
     gl.bufferData( gl.ARRAY_BUFFER,flatten(window1Vertices), gl.STATIC_DRAW );
-
-    // Associate out shader variables with our data buffer
-    
-    var vPosition = gl.getAttribLocation( program, "vPosition" );
-    var vColor = gl.getAttribLocation( program, "vColor" );
     
     // Draw the square
     
@@ -650,10 +598,6 @@ window.onload = function init()
     gl.bindBuffer( gl.ARRAY_BUFFER, window2BufferId );
     gl.bufferData( gl.ARRAY_BUFFER,flatten(window2Vertices), gl.STATIC_DRAW );
 
-    // Associate out shader variables with our data buffer
-    
-    var vPosition = gl.getAttribLocation( program, "vPosition" );
-    var vColor = gl.getAttribLocation( program, "vColor" );
     
     // Draw the square
     
@@ -671,11 +615,6 @@ window.onload = function init()
     var window3BufferId = gl.createBuffer();
     gl.bindBuffer( gl.ARRAY_BUFFER, window3BufferId );
     gl.bufferData( gl.ARRAY_BUFFER,flatten(window3Vertices), gl.STATIC_DRAW );
-
-    // Associate out shader variables with our data buffer
-    
-    var vPosition = gl.getAttribLocation( program, "vPosition" );
-    var vColor = gl.getAttribLocation( program, "vColor" );
     
     // Draw the square
     
@@ -692,11 +631,6 @@ window.onload = function init()
     var window4BufferId = gl.createBuffer();
     gl.bindBuffer( gl.ARRAY_BUFFER, window4BufferId );
     gl.bufferData( gl.ARRAY_BUFFER,flatten(window4Vertices), gl.STATIC_DRAW );
-
-    // Associate out shader variables with our data buffer
-    
-    var vPosition = gl.getAttribLocation( program, "vPosition" );
-    var vColor = gl.getAttribLocation( program, "vColor" );
     
     // Draw the square
     
@@ -713,11 +647,6 @@ window.onload = function init()
     var window5BufferId = gl.createBuffer();
     gl.bindBuffer( gl.ARRAY_BUFFER, window5BufferId );
     gl.bufferData( gl.ARRAY_BUFFER,flatten(window5Vertices), gl.STATIC_DRAW );
-
-    // Associate out shader variables with our data buffer
-    
-    var vPosition = gl.getAttribLocation( program, "vPosition" );
-    var vColor = gl.getAttribLocation( program, "vColor" );
     
     // Draw the square
     
@@ -736,11 +665,6 @@ window.onload = function init()
     gl.bindBuffer( gl.ARRAY_BUFFER, window6BufferId );
     gl.bufferData( gl.ARRAY_BUFFER,flatten(window6Vertices), gl.STATIC_DRAW );
 
-    // Associate out shader variables with our data buffer
-    
-    var vPosition = gl.getAttribLocation( program, "vPosition" );
-    var vColor = gl.getAttribLocation( program, "vColor" );
-    
     // Draw the square
     
     gl.bindBuffer( gl.ARRAY_BUFFER, window6BufferId);
@@ -761,11 +685,6 @@ window.onload = function init()
     var hexagon0BufferId = gl.createBuffer();
     gl.bindBuffer( gl.ARRAY_BUFFER, hexagon0BufferId );
     gl.bufferData( gl.ARRAY_BUFFER,flatten(hexagon0Vertices), gl.STATIC_DRAW );
-
-    // Associate out shader variables with our data buffer
-    
-    var vPosition = gl.getAttribLocation( program, "vPosition" );
-    var vColor = gl.getAttribLocation( program, "vColor" );
     
     // Draw the hexagon
     
@@ -782,11 +701,6 @@ window.onload = function init()
     var star00BufferId = gl.createBuffer();
     gl.bindBuffer( gl.ARRAY_BUFFER, star00BufferId );
     gl.bufferData( gl.ARRAY_BUFFER,flatten(star00Vertices), gl.STATIC_DRAW );
-
-    // Associate out shader variables with our data buffer
-    
-    var vPosition = gl.getAttribLocation( program, "vPosition" );
-    var vColor = gl.getAttribLocation( program, "vColor" );
     
     // Draw the triangle
     
@@ -805,11 +719,6 @@ window.onload = function init()
     gl.bindBuffer( gl.ARRAY_BUFFER, star01BufferId );
     gl.bufferData( gl.ARRAY_BUFFER,flatten(star01Vertices), gl.STATIC_DRAW );
 
-    // Associate out shader variables with our data buffer
-    
-    var vPosition = gl.getAttribLocation( program, "vPosition" );
-    var vColor = gl.getAttribLocation( program, "vColor" );
-    
     // Draw the triangle
     
     gl.bindBuffer( gl.ARRAY_BUFFER, star01BufferId);
@@ -826,11 +735,6 @@ window.onload = function init()
     gl.bindBuffer( gl.ARRAY_BUFFER, star02BufferId );
     gl.bufferData( gl.ARRAY_BUFFER,flatten(star02Vertices), gl.STATIC_DRAW );
 
-    // Associate out shader variables with our data buffer
-    
-    var vPosition = gl.getAttribLocation( program, "vPosition" );
-    var vColor = gl.getAttribLocation( program, "vColor" );
-    
     // Draw the triangle
     
     gl.bindBuffer( gl.ARRAY_BUFFER, star02BufferId);
@@ -848,10 +752,7 @@ window.onload = function init()
     gl.bufferData( gl.ARRAY_BUFFER,flatten(star03Vertices), gl.STATIC_DRAW );
 
     // Associate out shader variables with our data buffer
-    
-    var vPosition = gl.getAttribLocation( program, "vPosition" );
-    var vColor = gl.getAttribLocation( program, "vColor" );
-    
+ 
     // Draw the triangle
     
     gl.bindBuffer( gl.ARRAY_BUFFER, star03BufferId);
@@ -867,12 +768,6 @@ window.onload = function init()
     var star04BufferId = gl.createBuffer();
     gl.bindBuffer( gl.ARRAY_BUFFER, star04BufferId );
     gl.bufferData( gl.ARRAY_BUFFER,flatten(star04Vertices), gl.STATIC_DRAW );
-
-    // Associate out shader variables with our data buffer
-    
-    var vPosition = gl.getAttribLocation( program, "vPosition" );
-    var vColor = gl.getAttribLocation( program, "vColor" );
-    
     // Draw the triangle
     
     gl.bindBuffer( gl.ARRAY_BUFFER, star04BufferId);
@@ -888,11 +783,6 @@ window.onload = function init()
     var star05BufferId = gl.createBuffer();
     gl.bindBuffer( gl.ARRAY_BUFFER, star05BufferId );
     gl.bufferData( gl.ARRAY_BUFFER,flatten(star05Vertices), gl.STATIC_DRAW );
-
-    // Associate out shader variables with our data buffer
-    
-    var vPosition = gl.getAttribLocation( program, "vPosition" );
-    var vColor = gl.getAttribLocation( program, "vColor" );
     
     // Draw the triangle
     
@@ -912,11 +802,6 @@ window.onload = function init()
     var hexagon1BufferId = gl.createBuffer();
     gl.bindBuffer( gl.ARRAY_BUFFER, hexagon1BufferId );
     gl.bufferData( gl.ARRAY_BUFFER,flatten(hexagon1Vertices), gl.STATIC_DRAW );
-
-    // Associate out shader variables with our data buffer
-    
-    var vPosition = gl.getAttribLocation( program, "vPosition" );
-    var vColor = gl.getAttribLocation( program, "vColor" );
     
     // Draw the hexagon
     
@@ -933,11 +818,6 @@ window.onload = function init()
     var star10BufferId = gl.createBuffer();
     gl.bindBuffer( gl.ARRAY_BUFFER, star10BufferId );
     gl.bufferData( gl.ARRAY_BUFFER,flatten(star10Vertices), gl.STATIC_DRAW );
-
-    // Associate out shader variables with our data buffer
-    
-    var vPosition = gl.getAttribLocation( program, "vPosition" );
-    var vColor = gl.getAttribLocation( program, "vColor" );
     
     // Draw the triangle
     
@@ -955,11 +835,6 @@ window.onload = function init()
     var star11BufferId = gl.createBuffer();
     gl.bindBuffer( gl.ARRAY_BUFFER, star11BufferId );
     gl.bufferData( gl.ARRAY_BUFFER,flatten(star11Vertices), gl.STATIC_DRAW );
-
-    // Associate out shader variables with our data buffer
-    
-    var vPosition = gl.getAttribLocation( program, "vPosition" );
-    var vColor = gl.getAttribLocation( program, "vColor" );
     
     // Draw the triangle
     
@@ -977,11 +852,6 @@ window.onload = function init()
     gl.bindBuffer( gl.ARRAY_BUFFER, star12BufferId );
     gl.bufferData( gl.ARRAY_BUFFER,flatten(star12Vertices), gl.STATIC_DRAW );
 
-    // Associate out shader variables with our data buffer
-    
-    var vPosition = gl.getAttribLocation( program, "vPosition" );
-    var vColor = gl.getAttribLocation( program, "vColor" );
-    
     // Draw the triangle
     
     gl.bindBuffer( gl.ARRAY_BUFFER, star12BufferId);
@@ -997,11 +867,6 @@ window.onload = function init()
     var star13BufferId = gl.createBuffer();
     gl.bindBuffer( gl.ARRAY_BUFFER, star13BufferId );
     gl.bufferData( gl.ARRAY_BUFFER,flatten(star13Vertices), gl.STATIC_DRAW );
-
-    // Associate out shader variables with our data buffer
-    
-    var vPosition = gl.getAttribLocation( program, "vPosition" );
-    var vColor = gl.getAttribLocation( program, "vColor" );
     
     // Draw the triangle
     
@@ -1018,11 +883,6 @@ window.onload = function init()
     var star14BufferId = gl.createBuffer();
     gl.bindBuffer( gl.ARRAY_BUFFER, star14BufferId );
     gl.bufferData( gl.ARRAY_BUFFER,flatten(star14Vertices), gl.STATIC_DRAW );
-
-    // Associate out shader variables with our data buffer
-    
-    var vPosition = gl.getAttribLocation( program, "vPosition" );
-    var vColor = gl.getAttribLocation( program, "vColor" );
     
     // Draw the triangle
     
@@ -1039,11 +899,6 @@ window.onload = function init()
     var star15BufferId = gl.createBuffer();
     gl.bindBuffer( gl.ARRAY_BUFFER, star15BufferId );
     gl.bufferData( gl.ARRAY_BUFFER,flatten(star15Vertices), gl.STATIC_DRAW );
-
-    // Associate out shader variables with our data buffer
-    
-    var vPosition = gl.getAttribLocation( program, "vPosition" );
-    var vColor = gl.getAttribLocation( program, "vColor" );
     
     // Draw the triangle
     
@@ -1089,11 +944,6 @@ window.onload = function init()
     var riverBankBufferId = gl.createBuffer();
     gl.bindBuffer( gl.ARRAY_BUFFER, riverBankBufferId );
     gl.bufferData( gl.ARRAY_BUFFER,flatten(riverBankVertices), gl.STATIC_DRAW );
-
-    // Associate out shader variables with our data buffer
-    
-    var vPosition = gl.getAttribLocation( program, "vPosition" );
-    var vColor = gl.getAttribLocation( program, "vColor" );
     
     // Draw the square
     
@@ -1107,5 +957,14 @@ window.onload = function init()
 	///////////////////////////////////////////////도연 추가한 코드/////////////////////////////////////////////////////////////////
 	document.getElementById("Dog").onclick = function() {
 		console.log(event.button);
-		direction = !direction;
+		dog_direction = !dog_direction;
+	}
+	document.getElementById("Cat").onclick = function() {
+		console.log(event.button);
+		cat_direction = !cat_direction;
+	}
 };
+
+function render(){
+
+}
