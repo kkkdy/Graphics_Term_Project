@@ -6,7 +6,7 @@
 attribute vec4 vPosition;
 attribute vec4 vColor;
 varying vec4 fColor;
-
+uniform vec2 u_translation;
 void
 main()
 {
@@ -30,13 +30,16 @@ main()
 <script type="text/javascript" src="../Common/webgl-utils.js"></script>
 <script type="text/javascript" src="../Common/initShaders.js"></script>
 <script type="text/javascript" src="../Common/MV.js"></script>
-<script type="text/javascript" src="minji.js"></script>
+<script type="text/javascript" src="assignment2.js"></script>
 </head>
 
 <body>
-ID: 201835402 NAME: 강민지 <br>
+Team ID: 4 Team members: 강민지, 김도연, 김민경 <br>
 <canvas id="gl-canvas" width="512" height="512">
 Oops … your browser doesn't support the HTML5 canvas element
 </canvas>
+<br>
+<button id="Dog">Change dog direction</button>
+<button id="Cat">Change cat direction</button>
 </body>
 </html>

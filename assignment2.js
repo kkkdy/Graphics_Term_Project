@@ -1,6 +1,6 @@
 var gl;
 var points;
-
+var direction = true;
 window.onload = function init()
 {
     var canvas = document.getElementById( "gl-canvas" );
@@ -1104,4 +1104,8 @@ window.onload = function init()
     gl.vertexAttrib4f(vColor, 0.0, 0.0, 0.0, 0.9);
     gl.drawArrays(gl.TRIANGLES, 0, 6);
     
+	///////////////////////////////////////////////도연 추가한 코드/////////////////////////////////////////////////////////////////
+	document.getElementById("Dog").onclick = function() {
+		console.log(event.button);
+		direction = !direction;
 };
