@@ -2,6 +2,8 @@ var gl;
 var points;
 var dog_direction = true;
 var cat_direction = false;
+var thetaLoc;
+var theta = 0;
 window.onload = function init()
 {
     var canvas = document.getElementById( "gl-canvas" );
@@ -963,8 +965,19 @@ window.onload = function init()
 		console.log(event.button);
 		cat_direction = !cat_direction;
 	}
+	thetaLoc = gl.getUniformLocation(program, "theta");
+
 };
 
-function render(){
-
+function render_animal(direction){
+	theta = (direction ? Math.PI, -Math.PI);
+	gl.uniform1f(thetaLoc, theta);
+	
+	// TODO : 그려야하는 강아지, 공을 그려주면 됨 (gl.drawArrays)
+}
+function render_others_1(){
+	theta = 0 ;
+	gl.uniform1f(thetaLoc, theta);
+	
+	// TODO: 다른 물체들은 theta값을 고정시켜서 그려줌 (PB: geometric이 달라지면?-> 또 다른 함수를 호출?)
 }
