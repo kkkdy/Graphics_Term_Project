@@ -13,7 +13,7 @@ void
 main()
 {	
 	gl_Position = vPosition;
-	gl_Position.x = (theta * vPosition.x) + xoffset;
+	gl_Position.x = theta *( vPosition.x + xoffset);
 	gl_Position.y = vPosition.y + yoffset;
 	
     fColor = vColor;
@@ -30,14 +30,15 @@ main()
     gl_FragColor = fColor;
 }
 </script>
+<script type="text/javascript" src="assignment2.js"></script>
 
 <script type="text/javascript" src="../Common/webgl-utils.js"></script>
 <script type="text/javascript" src="../Common/initShaders.js"></script>
 <script type="text/javascript" src="../Common/MV.js"></script>
-<!--<script type="text/javascript" src="C:/Users/alice/Downloads/Practices/Common/webgl-utils.js"></script>
+<!--
+<script type="text/javascript" src="C:/Users/alice/Downloads/Practices/Common/webgl-utils.js"></script>
 <script type="text/javascript" src="C:/Users/alice/Downloads/Practices/Common/initShaders.js"></script>
 <script type="text/javascript" src="C:/Users/alice/Downloads/Practices/Common/MV.js"></script>
-<script type="text/javascript" src="assignment2.js"></script>
 -->
 </head>
 

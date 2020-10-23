@@ -11,7 +11,7 @@ var xoffset;
 var yoffset;
 var delay = 100;
 
-    //////////[Start dog vertices(민경)]//////////////////////////////////////
+    //////////[Start dog vertices]//////////////////////////////////////
    
    var dogbody = [ 
       // head
@@ -116,11 +116,9 @@ var delay = 100;
       vec2( 0.8451, 0.2528), // d
    ];
    
-   var resizingDogbody = resizeVertex(JSON.parse(JSON.stringify(dogbody)), 0.3);
-   var resizingDog = resizeVertex(JSON.parse(JSON.stringify(dog)), 0.3);
-   //////////[End Dog Vertices(민경)]/////////////////////////////////////////
+   //////////[End Dog Vertices]/////////////////////////////////////////
    
-   //////////[Start Circle Vertices(민경)]/////////////////////////////////////////
+   //////////[Start Circle Vertices]/////////////////////////////////////////
    var circle = [];
    for (var i = 0; i <= 360; i+=1){
       var j = i * Math.PI / 180;
@@ -129,9 +127,9 @@ var delay = 100;
       circle = circle.concat(vert1);
       circle = circle.concat(vert2);
    }
-   //////////[End Circle Vertices(민경)]/////////////////////////////////////////
+   //////////[End Circle Vertices]/////////////////////////////////////////
    
-   
+//One of event handling function init()   
 window.onload = function init()
 {
     var canvas = document.getElementById( "gl-canvas" );
@@ -139,33 +137,25 @@ window.onload = function init()
     gl = WebGLUtils.setupWebGL( canvas );
     if ( !gl ) { alert( "WebGL isn't available" ); }
     
-    /*-----------------------------------------------------------------------*/
-   /* Background -----------------------------------------------------------*/
-   /*-----------------------------------------------------------------------*/
-    
     //  Configure WebGL
-
     gl.viewport( 0, 0, canvas.width, canvas.height );
     gl.clearColor( 1.0, 1.0, 1.0, 1.0 );
     
-    //  Load shaders and initialize attribute buffers
-    
+    //  Load shaders and initialize attribute buffers 
     var program = initShaders( gl, "vertex-shader", "fragment-shader" );
     gl.useProgram( program );
    
    
     // Associate out shader variables with our data buffer
-    
     vPosition = gl.getAttribLocation( program, "vPosition" );
     vColor = gl.getAttribLocation( program, "vColor" );
     thetaLoc = gl.getUniformLocation( program, "theta");
     xoffset = gl.getUniformLocation(program, "xoffset");
     yoffset = gl.getUniformLocation(program, "yoffset");
 
-    // Load the data into the GPU
-    
-   ///////////////////////////////////////////////////////////////////
+       
    window.addEventListener("keydown", render);
+   // for moving animation, set the interval
    var intervalId = setInterval ( render, delay );
    render(); 
    
@@ -173,16 +163,17 @@ window.onload = function init()
 	// Changing the direction for "dog" object using button eventhandler
    document.getElementById("Dog").onclick = function() {
       //console.log(event.button);
-      dog_direction = !dog_direction;
-      render();
+      dog_direction = !dog_direction;// change the boolean variable
+      render();// call the render function to redraw
    }
+   // Changing the direction for "ball" object using button eventhandler
    document.getElementById("Ball").onclick = function() {
       //console.log(event.button);
-      ball_direction = !ball_direction;
-	  render();
+      ball_direction = !ball_direction;// change the boolean variable
+	  render();// call the render function to redraw
    }
 };
-/* resizeVertex(dog)*/
+/* function for resizing vertex(using for drawing dog) : using parameter "x". scale the vertex value*/
 function resizeVertex(vertex, x) {
     var newVertex = new Array();
     for (var i = 0; i < vertex.length; i++) {
@@ -193,46 +184,66 @@ function resizeVertex(vertex, x) {
     }
     return newVertex;
 }
-// rendering function for specific object that animating direction can be changed 
+// rendering function for specific object that animating direction can be changed : dog, ball 
 function render_object(){
+	//using "dog_direction" variable, set the theta(uniform value)
    theta = (dog_direction ? 1 : -1);
    gl.uniform1f(thetaLoc, theta);
    
-   /* start draw dog */
+   //for using above vertex array, resizing the vertex
    var resizingDogbody = resizeVertex(JSON.parse(JSON.stringify(dogbody)), 0.25);
    var resizingDog = resizeVertex(JSON.parse(JSON.stringify(dog)), 0.25);
    
-   offsetTemp -= 0.05;
+   /* for moving animation, set the offset value for x-axis*/
+   // if ball draws out of canvas, reset the offset value for showing on canvas
+   if(offsetTemp<-1) offsetTemp+=2;
+   // if ball draws in canvas, update the offset value to move in canvas for specific time interval
+   else offsetTemp -= 0.05;
+   
+   // send the offset value for x,y-axis to shader   
    gl.uniform1f(xoffset,offsetTemp);
    gl.uniform1f(yoffset,-0.27);
    
+   /* start draw dog */
    // draw dog body
    gl.bufferData( gl.ARRAY_BUFFER,flatten(resizingDogbody), gl.STATIC_DRAW );
    gl.disableVertexAttribArray(vColor);
    gl.vertexAttrib4f(vColor, 190/255, 170/255, 130/255, 1.0);
 
-   gl.drawArrays( gl.TRIANGLE_FAN, 0, 9 );
-   gl.drawArrays( gl.TRIANGLES, 9, 3);
-   gl.drawArrays( gl.TRIANGLE_FAN, 12, 10);
+   gl.drawArrays( gl.TRIANGLE_FAN, 0, 9 );// head
+   gl.drawArrays( gl.TRIANGLES, 9, 3);// neck
+   gl.drawArrays( gl.TRIANGLE_FAN, 12, 10);// body
    
    // draw dog's other part
    gl.bufferData( gl.ARRAY_BUFFER,flatten(resizingDog), gl.STATIC_DRAW );
    gl.vertexAttrib4f(vColor, 0.1, 0.05, 0.05, 1.0);
-   gl.drawArrays( gl.TRIANGLE_FAN, 0, 7 );
+   gl.drawArrays( gl.TRIANGLE_FAN, 0, 7 );// ear
    
    gl.vertexAttrib4f(vColor, 190/255, 170/255, 130/255, 1.0);
    
-   gl.drawArrays( gl.TRIANGLE_FAN, 7, 9 );
-   gl.drawArrays( gl.TRIANGLE_FAN, 14, 6 );
-   gl.drawArrays( gl.TRIANGLE_FAN, 20, 9 );
-   gl.drawArrays( gl.TRIANGLE_FAN, 29, 9 );
-   gl.drawArrays( gl.TRIANGLE_FAN, 29+7, 6 );
-   gl.drawArrays( gl.TRIANGLE_FAN, 29+7+6, 10 );
-   gl.drawArrays( gl.TRIANGLE_STRIP, 29+7+6+10, 5 );
+   gl.drawArrays( gl.TRIANGLE_FAN, 7, 9 );// forefront-leg
+   gl.drawArrays( gl.TRIANGLE_FAN, 14, 6 );// toe 
+   gl.drawArrays( gl.TRIANGLE_FAN, 20, 9 );// foreback-leg
+   gl.drawArrays( gl.TRIANGLE_FAN, 29, 9 );// rearfront-leg
+   gl.drawArrays( gl.TRIANGLE_FAN, 29+7, 6 );// toe
+   gl.drawArrays( gl.TRIANGLE_FAN, 29+7+6, 10 ); // rearback-leg
+   gl.drawArrays( gl.TRIANGLE_STRIP, 29+7+6+10, 5 );// tail
    /* end draw dog */
    
+   //using "ball_direction" variable, set the theta(uniform value)
    theta = (ball_direction ? 1 : -1);
    gl.uniform1f(thetaLoc, theta);
+   
+   /* for moving animation, set the offset value for x-axis*/
+   // if ball draws out of canvas, reset the offset value for showing on canvas
+   if(offsetTemp<-1) offsetTemp+=2;
+   // if ball draws in canvas, update the offset value to move in canvas for specific time interval
+   else offsetTemp -= 0.05;
+   
+   // send the offset value for x,y-axis to shader
+   gl.uniform1f(xoffset,offsetTemp);
+   gl.uniform1f(yoffset,-0.50);
+   
    /* start ball dog */
    gl.vertexAttrib4f(vColor, 0.7, 0.1, 0.2, 1.0);
    // gl.uniform4fv( vColor, vec4(0.4, 0.1, 0.2, 1));
@@ -1148,8 +1159,7 @@ function render(){
     gl.enableVertexAttribArray( vPosition );
     gl.enableVertexAttribArray(vColor);
     gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
-
-    
+  
     /*-----------------------------------------------------------------------*/
    /* River bank -----------------------------------------------------------*/
    /*-----------------------------------------------------------------------*/
@@ -1168,4 +1178,9 @@ function render(){
     gl.drawArrays(gl.TRIANGLES, 0, 6);
 	
 	render_object();
+}
+
+// rendering "star" when mouseclick event occurs
+function render_stars(){
+	
 }
