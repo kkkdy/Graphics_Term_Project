@@ -2,18 +2,19 @@
 <html>
 <head>
 <script id="vertex-shader" type="x-shader/x-vertex">
-
 attribute vec4 vPosition;
 uniform float theta;
 uniform float offset;
 attribute vec4 vColor;
 varying vec4 fColor;
+
 void
 main()
 {
 	float s = sin( theta );
 	float c = cos( theta );
 	
+	gl_Position = vPosition;
 	gl_Position.x = -s * vPosition.y + c * vPosition.x;
 	gl_Position.y = s * vPosition.x + c * vPosition.y;
 
@@ -32,7 +33,11 @@ main()
 }
 </script>
 
+<script type="text/javascript" src="../Common/webgl-utils.js"></script>
+<script type="text/javascript" src="../Common/initShaders.js"></script>
+<script type="text/javascript" src="../Common/MV.js"></script>
 <script type="text/javascript" src="assignment2.js"></script>
+
 </head>
 
 <body>
