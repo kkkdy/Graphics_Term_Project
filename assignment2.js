@@ -11,6 +11,7 @@ window.onload = function init()
     gl = WebGLUtils.setupWebGL( canvas );
     if ( !gl ) { alert( "WebGL isn't available" ); }
     
+<<<<<<< HEAD
 	//////////[Start dog vertices(민경)]//////////////////////////////////////
 	var dogbody = [ 
 		// head
@@ -129,6 +130,8 @@ window.onload = function init()
 		circle = circle.concat(vert2);
 	}
 	//////////[End Circle Vertices(민경)]/////////////////////////////////////////
+=======
+>>>>>>> parent of 0dc2277... add dog vertice and draw arrays
 
     //////////[Start Sky Vertices]//////////////////////////////////////
     //sky vertices
@@ -1086,22 +1089,13 @@ window.onload = function init()
 	thetaLoc = gl.getUniformLocation(program, "theta");
 
 };
-/* resizeVertex(dog)*/
-function resizeVertex(vertex, x) {
-    var newVertex = new Array();
-    for (var i = 0; i < vertex.length; i++) {
-        temp = vertex[i];
-        temp[0] *= x;
-        temp[1] *= x;
-        newVertex[i] = temp;
-    }
-    return newVertex;
-}
+
 function render_animal(direction){
 	theta = (direction ? Math.PI, -Math.PI);
 	gl.uniform1f(thetaLoc, theta);
 	
 	// TODO : 그려야하는 강아지, 공을 그려주면 됨 (gl.drawArrays)
+<<<<<<< HEAD
 	/* start draw dog */
 	gl.uniform4fv(uColor, vec4(0.2, 0.1, 0.1, 1));
 
@@ -1129,6 +1123,8 @@ function render_animal(direction){
 	gl.bufferData( gl.ARRAY_BUFFER,flatten(circle), gl.STATIC_DRAW );
 	gl.drawArrays( gl.TRIANGLE_STRIP, 0, circle.length / 2);
 	/* start ball dog */
+=======
+>>>>>>> parent of 0dc2277... add dog vertice and draw arrays
 }
 function render_others_1(){
 	theta = 0 ;
