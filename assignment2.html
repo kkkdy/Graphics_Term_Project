@@ -4,7 +4,8 @@
 <script id="vertex-shader" type="x-shader/x-vertex">
 attribute vec4 vPosition;
 uniform float theta;
-uniform float offset;
+uniform float xoffset;
+uniform float yoffset;
 attribute vec4 vColor;
 varying vec4 fColor;
 
@@ -12,8 +13,9 @@ void
 main()
 {	
 	gl_Position = vPosition;
-	gl_Position.x = theta * vPosition.x;
-
+	gl_Position.x = (theta * vPosition.x) + xoffset;
+	gl_Position.y = vPosition.y + yoffset;
+	
     fColor = vColor;
 }
 </script>
@@ -40,7 +42,7 @@ main()
 </head>
 
 <body>
-Team ID: 4 Team members: 강민지, 김도연, 김민경 <br>
+Team ID: 4 		Team members: 강민지, 김도연, 김민경 <br>
 <canvas id="gl-canvas" width="512" height="512">
 Oops … your browser doesn't support the HTML5 canvas element
 </canvas>
