@@ -118,6 +118,17 @@ window.onload = function init()
 	var resizingDogbody = resizeVertex(JSON.parse(JSON.stringify(dogbody)), 0.3);
 	var resizingDog = resizeVertex(JSON.parse(JSON.stringify(dog)), 0.3);
 	//////////[End Dog Vertices(민경)]/////////////////////////////////////////
+	
+	//////////[Start Circle Vertices(민경)]/////////////////////////////////////////
+	var circle = [];
+	for (var i = 0; i <= 360; i+=1){
+		var j = i * Math.PI / 180;
+		var vert1 = [ Math.sin(j) * 0.05, Math.cos(j) * 0.05];
+		var vert2 = [0, 0];
+		circle = circle.concat(vert1);
+		circle = circle.concat(vert2);
+	}
+	//////////[End Circle Vertices(민경)]/////////////////////////////////////////
 
     //////////[Start Sky Vertices]//////////////////////////////////////
     //sky vertices
@@ -1113,6 +1124,11 @@ function render_animal(direction){
     gl.drawArrays( gl.TRIANGLE_FAN, 29+7+6, 10 );
 	gl.drawArrays( gl.TRIANGLE_STRIP, 29+7+6+10, 5 );
 	/* end draw dog */
+	/* start ball dog */
+	gl.uniform4fv(uColor, vec4(0.4, 0.1, 0.2, 1));
+	gl.bufferData( gl.ARRAY_BUFFER,flatten(circle), gl.STATIC_DRAW );
+	gl.drawArrays( gl.TRIANGLE_STRIP, 0, circle.length / 2);
+	/* start ball dog */
 }
 function render_others_1(){
 	theta = 0 ;
