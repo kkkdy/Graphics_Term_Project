@@ -3,7 +3,7 @@ var points;
 var dog_direction = true;
 var cat_direction = false;
 var thetaLoc;
-var theta = 0;
+var theta ;
 var vColor ;
 var vPosition ;
 
@@ -152,7 +152,6 @@ window.onload = function init()
     vPosition = gl.getAttribLocation( program, "vPosition" );
     vColor = gl.getAttribLocation( program, "vColor" );
     thetaLoc = gl.getUniformLocation( program, "theta");
-	gl.uniform1f( thetaLoc, 0.0 );
 
     // Load the data into the GPU
     
@@ -171,7 +170,6 @@ window.onload = function init()
       console.log(event.button);
       cat_direction = !cat_direction;
    }
-   thetaLoc = gl.getUniformLocation(program, "theta");
 };
 /* resizeVertex(dog)*/
 function resizeVertex(vertex, x) {
@@ -185,7 +183,7 @@ function resizeVertex(vertex, x) {
     return newVertex;
 }
 function render_dog(direction){
-   theta = (direction ? Math.PI : -Math.PI);
+   theta = (direction ? 1 : -1);
    gl.uniform1f(thetaLoc, theta);
    
    // TODO : 그려야하는 강아지, 공을 그려주면 됨 (gl.drawArrays)
@@ -229,7 +227,7 @@ function render_dog(direction){
 }
 
 function render_others_1(){
-   theta = 0 ;
+   theta = 1 ;
    gl.uniform1f(thetaLoc, theta);
    
    //////////[Start Sky Vertices]//////////////////////////////////////

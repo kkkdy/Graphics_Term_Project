@@ -10,13 +10,9 @@ varying vec4 fColor;
 
 void
 main()
-{
-	float s = sin( theta );
-	float c = cos( theta );
-	
+{	
 	gl_Position = vPosition;
-	gl_Position.x = -s * vPosition.y + c * vPosition.x;
-	gl_Position.y = s * vPosition.x + c * vPosition.y;
+	gl_Position.x = theta * vPosition.x;
 
     fColor = vColor;
 }
@@ -36,8 +32,11 @@ main()
 <script type="text/javascript" src="../Common/webgl-utils.js"></script>
 <script type="text/javascript" src="../Common/initShaders.js"></script>
 <script type="text/javascript" src="../Common/MV.js"></script>
+<!--<script type="text/javascript" src="C:/Users/alice/Downloads/Practices/Common/webgl-utils.js"></script>
+<script type="text/javascript" src="C:/Users/alice/Downloads/Practices/Common/initShaders.js"></script>
+<script type="text/javascript" src="C:/Users/alice/Downloads/Practices/Common/MV.js"></script>
 <script type="text/javascript" src="assignment2.js"></script>
-
+-->
 </head>
 
 <body>
@@ -47,6 +46,6 @@ Oops … your browser doesn't support the HTML5 canvas element
 </canvas>
 <br>
 <button id="Dog">Change dog direction</button>
-<button id="Cat">Change cat direction</button>
+<button id="Ball">Change ball direction</button>
 </body>
 </html>
