@@ -10,6 +10,7 @@ var offsetTemp = +0.55;
 var xoffset;
 var yoffset;
 var delay = 100;
+var arrayVertex;
 
     //////////[Start dog vertices]//////////////////////////////////////
    
@@ -159,8 +160,21 @@ window.onload = function init()
    var intervalId = setInterval ( render, delay );
    render(); 
    
-
-	// Changing the direction for "dog" object using button eventhandler
+   canvas.addEventListener("mousedown", function(event){
+	   var t = vec2(2*event.clientX/canvas.width-1, 
+		2*(canvas.height-event.clientY)/canvas.height-1);
+	
+		arrayVertex = t;
+		arrayVertex.push(t[0]-0.5, t[1]-0.5);
+		arrayVertex.push(t[0]+0.5, t[1]-0.5);
+		arrayVertex.push(t[0]-0.5, t[1]+0.25);
+		arrayVertex.push(t[0], t[1]-0.75);
+		arrayVertex.push(t[0]+0.5, t[1]+0.25);
+		
+		console.log(arrayVertex);
+	});	
+   
+   // Changing the direction for "dog" object using button eventhandler
    document.getElementById("Dog").onclick = function() {
       //console.log(event.button);
       dog_direction = !dog_direction;// change the boolean variable
@@ -250,6 +264,9 @@ function render_object(){
    gl.bufferData( gl.ARRAY_BUFFER,flatten(circle), gl.STATIC_DRAW );
    gl.drawArrays( gl.TRIANGLE_STRIP, 0, circle.length / 2);
    /* start ball dog */
+}
+function render_ball(){
+	
 }
 
 // rendering function that contains background vertices information and drawing code using buffer.(drawArrays, buffer)
@@ -1178,9 +1195,11 @@ function render(){
     gl.drawArrays(gl.TRIANGLES, 0, 6);
 	
 	render_object();
+	
+	
 }
 
 // rendering "star" when mouseclick event occurs
-function render_stars(){
+function render_stars(event){
 	
 }
