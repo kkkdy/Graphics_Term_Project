@@ -2,21 +2,20 @@
 <html>
 <head>
 <script id="vertex-shader" type="x-shader/x-vertex">
-
 attribute vec4 vPosition;
 uniform float theta;
-uniform float offset;
+uniform float xoffset;
+uniform float yoffset;
 attribute vec4 vColor;
 varying vec4 fColor;
+
 void
 main()
-{
-	float s = sin( theta );
-	float c = cos( theta );
+{	
+	gl_Position = vPosition;
+	gl_Position.x = theta *( vPosition.x + xoffset);
+	gl_Position.y = vPosition.y + yoffset;
 	
-	gl_Position.x = -s * vPosition.y + c * vPosition.x;
-	gl_Position.y = s * vPosition.x + c * vPosition.y;
-
     fColor = vColor;
 }
 </script>
@@ -32,16 +31,26 @@ main()
 }
 </script>
 
+<script type="text/javascript" src="../Common/webgl-utils.js"></script>
+<script type="text/javascript" src="../Common/initShaders.js"></script>
+<script type="text/javascript" src="../Common/MV.js"></script>
 <script type="text/javascript" src="assignment2.js"></script>
+
+<!--
+<script type="text/javascript" src="C:/Users/alice/Downloads/Practices/Common/webgl-utils.js"></script>
+<script type="text/javascript" src="C:/Users/alice/Downloads/Practices/Common/initShaders.js"></script>
+<script type="text/javascript" src="C:/Users/alice/Downloads/Practices/Common/MV.js"></script>
+-->
 </head>
 
 <body>
-Team ID: 4 Team members: 강민지, 김도연, 김민경 <br>
+
 <canvas id="gl-canvas" width="512" height="512">
 Oops … your browser doesn't support the HTML5 canvas element
 </canvas>
 <br>
 <button id="Dog">Change dog direction</button>
-<button id="Cat">Change cat direction</button>
+<button id="Ball">Change ball direction</button>
+<br> Team ID: 4 		Team members: 강민지, 김도연, 김민경 <br>
 </body>
 </html>
