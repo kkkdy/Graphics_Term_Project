@@ -1,6 +1,7 @@
 "use strict";
 var canvas;
 var gl;
+var program;
 
 var xAxis = 0;
 var yAxis = 1;
@@ -12,27 +13,50 @@ var theta = [ 0, 0, 0 ];
 var points = [];
 var colors = [];
 
+var result_idx = -1;
+
 /* Store the chemical compound's element information in 2d array*/
 var compound = [
-	[2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], //H2
-	[0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0], //N2
-	[0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0], //F2
-	[0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0], //O3
-	[0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0], //CO
-	[4, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0], //CH4
-	[0, 0, 0, 0, 1, 0, 0, 0, 3, 0, 0, 0, 0], //BF3
-	[0, 0, 0, 0, 0, 1, 0, 2, 0, 0, 0, 0, 0], //CO2
-	[2, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0], //H2O
-	[4, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0], //C2H4
-	[1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0], //HCN
-	[0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0], //MgO
-	[3, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0], //NH3
-	[6, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0], //C2H6
-	[4, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0], //CH3OH
-	[2, 0, 0, 0, 0, 1, 0, 3, 0, 0, 0, 0, 0], //H2CO3
-	[0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 2], //AL2O3
-	[0, 0, 0, 0, 0, 1, 0, 3, 0, 0, 2, 0, 0], //NaCO3
+	[2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], //H2
+	[0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0], //N2
+	[0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0], //F2
+	[0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0], //O3
+	[0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0], //CO
+	[4, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0], //CH4
+	[0, 0, 0, 0, 1, 0, 0, 0, 3, 0, 0, 0], //BF3
+	[0, 0, 0, 0, 0, 1, 0, 2, 0, 0, 0, 0], //CO2
+	[2, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0], //H2O
+	[4, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0], //C2H4
+	[1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0], //HCN
+	[0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0], //MgO
+	[3, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0], //NH3
+	[6, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0], //C2H6
+	[4, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0], //CH3OH
+	[2, 0, 0, 0, 0, 1, 0, 3, 0, 0, 0, 0], //H2CO3
+	[0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 2], //Al2O3
+	[0, 0, 0, 0, 0, 1, 0, 3, 0, 2, 0, 0], //NaCO3
 ];
+var compound_result = [
+	"H2",
+	"N2",
+	"F2",
+	"O3",
+	"CO",
+	"CH4",
+	"BF3",
+	"CO2",
+	"H2O",
+	"C2H4",
+	"HCN",
+	"MgO",
+	"NH3",
+	"C2H6",
+	"CH3OH",
+	"H2CO3",
+	"Al2O3",
+	"NaCO3",
+]
+var evaluating_input = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 
 /* vertice of each object */
 var Npoints = [];
@@ -59,6 +83,8 @@ var HCNcolors = [];
 var CH4colors = [];
 
 var electronicScale = 5;
+var electroNum = [1, 2, 1, 2, 3, 4, 5, 6, 7, 1, 2, 3];
+var scalesize = [37, 32, 152, 113, 88, 77, 70, 66, 64, 186, 160, 143];
 var Hescale = 32;
 var Bscale = 88;
 var Fscale = 64;
@@ -419,10 +445,78 @@ window.onload = function init()
     //
     //  Load shaders and initialize attribute buffers
     //
-    var program = initShaders( gl, "vertex-shader", "fragment-shader" );
+    program = initShaders( gl, "vertex-shader", "fragment-shader" );
     gl.useProgram( program );
     
-    var cBuffer = gl.createBuffer();
+    
+
+    modelViewMatrixLoc = gl.getUniformLocation( program, "modelViewMatrix" );
+	vLocationLoc = gl.getUniformLocation( program, "vLocation" );
+	
+   document.getElementById("make").onclick = function (){
+		// Get the value of input elements
+		for(var k = 0; k < 12; k++){
+			if(document.getElementById(eval("'"+k+"'")).style.display=="none"){
+				evaluating_input[k] = 0;
+			}
+			else {
+				var numberOfInput = parseInt(document.getElementById(eval("'"+k+"'")).value);
+				if( numberOfInput == NaN)
+					evaluating_input[k] = 0;
+				else
+					evaluating_input[k] = numberOfInput;
+			}
+		}
+		compare_input_value();
+		if(result_idx==-1){
+			console.log("Can't make the compound!");
+			restart();
+		}
+		else{
+			console.log(compound_result[result_idx]);
+			// 추후에 이 부분은 render_compound와 연결해줘야함
+		}	
+   };
+}
+function compare_input_value(){
+	for(var k = 0; k < 18; k++){
+		if(JSON.stringify(evaluating_input)==JSON.stringify(compound[k]))
+			result_idx = k
+	}
+}
+
+function render_element(i)
+{
+	// clear canvas
+    gl.clear( gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+	
+	document.getElementById(eval("'"+i+"'")).style.display="block";
+	
+	// set model view matrix 
+	var mainSphere = sphere(5);
+	mainSphere.scale( scalesize[i]*scalerate, scalesize[i]*scalerate, scalesize[i]*scalerate); 
+	points = points.concat(mainSphere.TriangleVertices);
+	colors = colors.concat(mainSphere.TriangleVertexColors);
+
+	var electronic ;
+	for (var k = 0; k < electroNum[i]; k += 1){
+		console.log("electronic draw!");
+		var j = k * 45 * Math.PI / 180;
+		electronic = sphere(5);
+		electronic.scale(electronicScale * scalerate,electronicScale * scalerate,electronicScale * scalerate);
+		// ex) 원소 위치 + sin * 원소크기 + 0.05 + rotation
+		electronic.translate (Math.sin(j) * (Fscale * scalerate+ 0.05), 0.0 , Math.cos(j) * (Fscale * scalerate+ 0.05));
+		
+		points = points.concat(electronic.TriangleVertices);
+		colors = colors.concat(electronic.TriangleVertexColors);
+	}
+	radius = 0;
+	eye = vec3(radius * Math.cos(theta) * Math.sin(phi), 
+				radius * Math.sin(theta),
+				radius * Math.cos(theta) * Math.cos(phi)); // eye point
+	modelViewMatrix = lookAt(eye, at , up);
+	
+	var cBuffer = gl.createBuffer();
 	gl.bindBuffer( gl.ARRAY_BUFFER, cBuffer );
 	gl.bufferData( gl.ARRAY_BUFFER, flatten(colors), gl.STATIC_DRAW );
 		
@@ -438,158 +532,63 @@ window.onload = function init()
     var vPosition = gl.getAttribLocation( program, "vPosition" );
     gl.vertexAttribPointer( vPosition, 4, gl.FLOAT, false, 0, 0 );
     gl.enableVertexAttribArray( vPosition );
+	
+	// send to html
 
-    modelViewMatrixLoc = gl.getUniformLocation( program, "modelViewMatrix" );
-	vLocationLoc = gl.getUniformLocation( program, "vLocation" );
+    gl.uniformMatrix4fv( modelViewMatrixLoc, false, flatten(modelViewMatrix) );
+	//console.log('Marker Found: ', markerId);	
+	// console.log(position);
+	gl.uniform3f(vLocationLoc, position.x/10, position.y/10, - position.z/10);
+	// draw	
+
+    gl.drawArrays( gl.TRIANGLES, 0, points.length);
 	
-    //event listeners for buttons
-	document.getElementById( "O2Button" ).onclick = function () {
-		points = JSON.parse(JSON.stringify(O2points));
-		colors = JSON.parse(JSON.stringify(O2colors));
-		gl.bindBuffer( gl.ARRAY_BUFFER, cBuffer );
-		gl.bufferData( gl.ARRAY_BUFFER, flatten(colors), gl.STATIC_DRAW );
-		gl.bindBuffer( gl.ARRAY_BUFFER, vBuffer );
-		gl.bufferData( gl.ARRAY_BUFFER, flatten(points), gl.STATIC_DRAW );
-		console.log("O2");
 	
-    };
-	document.getElementById( "C2H4Button" ).onclick = function () {
-		points = JSON.parse(JSON.stringify(C2H4points));
-		colors = JSON.parse(JSON.stringify(C2H4colors));
-		gl.bindBuffer( gl.ARRAY_BUFFER, cBuffer );
-		gl.bufferData( gl.ARRAY_BUFFER, flatten(colors), gl.STATIC_DRAW );
-		gl.bindBuffer( gl.ARRAY_BUFFER, vBuffer );
-		gl.bufferData( gl.ARRAY_BUFFER, flatten(points), gl.STATIC_DRAW );
-		console.log("C2H4");
-    };
-    document.getElementById( "O3Button" ).onclick = function () {
-        points = JSON.parse(JSON.stringify(O3points));
-		colors = JSON.parse(JSON.stringify(O3colors));
-		gl.bindBuffer( gl.ARRAY_BUFFER, cBuffer );
-		gl.bufferData( gl.ARRAY_BUFFER, flatten(colors), gl.STATIC_DRAW );
-		gl.bindBuffer( gl.ARRAY_BUFFER, vBuffer );
-		gl.bufferData( gl.ARRAY_BUFFER, flatten(points), gl.STATIC_DRAW );
-		console.log("O3");
-    };
-    document.getElementById( "H2CO3Button" ).onclick = function () {
-        points = JSON.parse(JSON.stringify(H2CO3points));
-		colors = JSON.parse(JSON.stringify(H2CO3colors));
-		gl.bindBuffer( gl.ARRAY_BUFFER, cBuffer );
-		gl.bufferData( gl.ARRAY_BUFFER, flatten(colors), gl.STATIC_DRAW );
-		gl.bindBuffer( gl.ARRAY_BUFFER, vBuffer );
-		gl.bufferData( gl.ARRAY_BUFFER, flatten(points), gl.STATIC_DRAW );
-		console.log("H2CO3");
-    };
-	document.getElementById( "HCNButton" ).onclick = function () {
-        points = JSON.parse(JSON.stringify(HCNpoints));
-		colors = JSON.parse(JSON.stringify(HCNcolors));
-		gl.bindBuffer( gl.ARRAY_BUFFER, cBuffer );
-		gl.bufferData( gl.ARRAY_BUFFER, flatten(colors), gl.STATIC_DRAW );
-		gl.bindBuffer( gl.ARRAY_BUFFER, vBuffer );
-		gl.bufferData( gl.ARRAY_BUFFER, flatten(points), gl.STATIC_DRAW );
-		console.log("HCN");
-    };
-    document.getElementById( "CH4Button" ).onclick = function () {
-        points = JSON.parse(JSON.stringify(CH4points));
-		colors = JSON.parse(JSON.stringify(CH4colors));
-		gl.bindBuffer( gl.ARRAY_BUFFER, cBuffer );
-		gl.bufferData( gl.ARRAY_BUFFER, flatten(colors), gl.STATIC_DRAW );
-		gl.bindBuffer( gl.ARRAY_BUFFER, vBuffer );
-		gl.bufferData( gl.ARRAY_BUFFER, flatten(points), gl.STATIC_DRAW );
-		console.log("CH4");
-    };
-	document.getElementById( "NButton" ).onclick = function () {
-        points = JSON.parse(JSON.stringify(Npoints));
-		colors = JSON.parse(JSON.stringify(Ncolors));
-		gl.bindBuffer( gl.ARRAY_BUFFER, cBuffer );
-		gl.bufferData( gl.ARRAY_BUFFER, flatten(colors), gl.STATIC_DRAW );
-		gl.bindBuffer( gl.ARRAY_BUFFER, vBuffer );
-		gl.bufferData( gl.ARRAY_BUFFER, flatten(points), gl.STATIC_DRAW );
-		console.log("N");
-    };
-	document.getElementById( "HeButton" ).onclick = function () {
-        points = JSON.parse(JSON.stringify(Hepoints));
-		colors = JSON.parse(JSON.stringify(Hecolors));
-		gl.bindBuffer( gl.ARRAY_BUFFER, cBuffer );
-		gl.bufferData( gl.ARRAY_BUFFER, flatten(colors), gl.STATIC_DRAW );
-		gl.bindBuffer( gl.ARRAY_BUFFER, vBuffer );
-		gl.bufferData( gl.ARRAY_BUFFER, flatten(points), gl.STATIC_DRAW );
-		console.log("He");
-    };
-	document.getElementById( "BButton" ).onclick = function () {
-        points = JSON.parse(JSON.stringify(Bpoints));
-		colors = JSON.parse(JSON.stringify(Bcolors));
-		gl.bindBuffer( gl.ARRAY_BUFFER, cBuffer );
-		gl.bufferData( gl.ARRAY_BUFFER, flatten(colors), gl.STATIC_DRAW );
-		gl.bindBuffer( gl.ARRAY_BUFFER, vBuffer );
-		gl.bufferData( gl.ARRAY_BUFFER, flatten(points), gl.STATIC_DRAW );
-		console.log("B");
-    };
-	document.getElementById( "FButton" ).onclick = function () {
-        points = JSON.parse(JSON.stringify(Fpoints));
-		colors = JSON.parse(JSON.stringify(Fcolors));
-		gl.bindBuffer( gl.ARRAY_BUFFER, cBuffer );
-		gl.bufferData( gl.ARRAY_BUFFER, flatten(colors), gl.STATIC_DRAW );
-		gl.bindBuffer( gl.ARRAY_BUFFER, vBuffer );
-		gl.bufferData( gl.ARRAY_BUFFER, flatten(points), gl.STATIC_DRAW );
-		console.log("F");
-    };
-	
-	// sliders for viewing parameters
-    document.getElementById("radiusSlider").onchange = function(event) {
-       radius = event.target.value;
-    };
-    document.getElementById("thetaSlider").onchange = function(event) {
-        theta = event.target.value* Math.PI/180.0;
-    };
-    document.getElementById("phiSlider").onchange = function(event) {
-        phi = event.target.value* Math.PI/180.0;
-    };
-	
-	document.getElementById( "MakeButton" ).onclick = function (){
-		var num = document.getElementById("input").value;
-	}
 }
-
-
-function render()
-{
+function render_compound(){
 	// clear canvas
     gl.clear( gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-	// set model view matrix 
-
+	
 	radius = 0;
 	eye = vec3(radius * Math.cos(theta) * Math.sin(phi), 
 				radius * Math.sin(theta),
 				radius * Math.cos(theta) * Math.cos(phi)); // eye point
 	modelViewMatrix = lookAt(eye, at , up);
 	
+	var cBuffer = gl.createBuffer();
+	gl.bindBuffer( gl.ARRAY_BUFFER, cBuffer );
+	gl.bufferData( gl.ARRAY_BUFFER, flatten(colors), gl.STATIC_DRAW );
+		
+
+    var vColor = gl.getAttribLocation( program, "vColor" );
+    gl.vertexAttribPointer( vColor, 4, gl.FLOAT, false, 0, 0 );
+    gl.enableVertexAttribArray( vColor );
+
+    var vBuffer = gl.createBuffer();
+	gl.bindBuffer( gl.ARRAY_BUFFER, vBuffer );
+	gl.bufferData( gl.ARRAY_BUFFER, flatten(points), gl.STATIC_DRAW );
+    
+    var vPosition = gl.getAttribLocation( program, "vPosition" );
+    gl.vertexAttribPointer( vPosition, 4, gl.FLOAT, false, 0, 0 );
+    gl.enableVertexAttribArray( vPosition );
+	
 	// send to html
 
     gl.uniformMatrix4fv( modelViewMatrixLoc, false, flatten(modelViewMatrix) );
-	// console.log(position);
+	
 	gl.uniform3f(vLocationLoc, position.x/10, position.y/10, - position.z/10);
-	// draw
+	// draw	
+
     gl.drawArrays( gl.TRIANGLES, 0, points.length);
 	
-	// request animation
-	requestAnimFrame(render);
 }
-
-// (i, Oscale, xpos, ypos, zpos of )
-function renderElectro (electroNum, atomScale, xpos, ypos, zpos){
-	var electronic ;
-
-	for (var i = 0; i <= 8; i += 1){
-		var j = i * 45 * Math.PI / 180;
-		electronic = sphere(3);
-		electronic.scale(electronicScale * scalerate,electronicScale * scalerate,electronicScale * scalerate);
-		// ex) 원소 위치 + sin * 원소크기 + 0.05 + rotation
-		electronic.translate (xpos + Math.sin(j) * (atomScale * scalerate+ 0.05), ypos , zpos+  Math.cos(j) * (atomScale * scalerate+ 0.05));
-		
-		
-		O2points = O2points.concat(electronic.TriangleVertices);
-		O2colors = O2colors.concat(electronic.TriangleVertexColors);
+function restart(){
+	points = [];
+	colors = [];
+	document.getElementById("get_input").reset();
+	for(var k = 0; k < 12; k++){
+		document.getElementById(eval("'"+k+"'")).style.display="none";
 	}
+	result_idx = -1;
 }
 

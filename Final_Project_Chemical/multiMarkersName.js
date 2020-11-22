@@ -3,9 +3,11 @@
 //Global Variable
 var markersURLArray=[];
 var markersNameArray=[];
-var canvas;
-var markerEl;
+//var canvas;
+//var markerEl;
 var position = [0,0,0];
+//var markerId = -1;
+//var markerNum;
 
 AFRAME.registerComponent('markers_start',{
 	init:function(){
@@ -13,11 +15,11 @@ AFRAME.registerComponent('markers_start',{
 
 		var sceneEl = document.querySelector('a-scene');	
 
-			canvas = document.getElementById('gl-canvas');
+		//canvas = document.getElementById('gl-canvas');
 			
 		
 		//list of the markers : We make 13 markers for chemical elements
-		for(var i=1; i<14; i++)
+		for(var i=1; i<13; i++)
 		{
 			var url="resources/markers/pattern-Individual_Blocks-"+i+".patt";
 			markersURLArray.push(url);
@@ -26,10 +28,10 @@ AFRAME.registerComponent('markers_start',{
 		}
 		
 		//list of the markers : We make 13 markers for chemical elements		
-		for(var k=0; k<13; k++)
+		for(var k=0; k<12; k++)
 		{
 			
-			markerEl = document.createElement('a-marker');
+			var markerEl = document.createElement('a-marker');
 			
 			markerEl.setAttribute('type','pattern');
 			markerEl.setAttribute('url',markersURLArray[k]);
@@ -47,8 +49,6 @@ AFRAME.registerComponent('markers_start',{
 			textEl.object3D.rotation.set(-90, 0, 0);
 
 			markerEl.appendChild(textEl);
-			
-			
 		}
 	}
 });
@@ -58,18 +58,23 @@ AFRAME.registerComponent('markers_start',{
 AFRAME.registerComponent('registerevents', {
 		init: function () {
 			const marker = this.el;
-
+			
 			marker.addEventListener("markerFound", ()=> {
 				var markerId = marker.id;
+				
+				markerNum = markerId.substring(7,9);
+				
 				position = marker.getAttribute('position');
 				console.log('Marker Found: ', markerId);
-				console.log(position);
+				//console.log(position);
 				// marker pos = camera function
-				
+				points = [];
+				colors = [];
+				render_element(markerNum-1);		
 			});
 
 			marker.addEventListener("markerLost",() =>{
-				var markerId = marker.id;
+				markerId = marker.id;
 				console.log('Marker Lost: ', markerId);
 			});
 		},
