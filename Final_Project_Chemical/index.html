@@ -40,8 +40,16 @@ main()
 <script type="text/javascript" src="draw_geometry/geometry.js"></script>
 <script type="text/javascript" src="draw_geometry/molecule.js"></script>
 
-	</head>
-	<body>
+</head>	
+<body onmousemove="myFunction(event)">
+	<script>
+	/**** ****/
+	function myFunction(e) {
+		x = e.clientX;
+		y = e.clientY;
+	}
+	/**** ****/
+	</script>
 	<div id="myEmbeddedScene">
 	<a-scene embedded markers_start vr-mode-ui="enabled: false" color-space="sRGB" renderer="gammaOutput: true"
   embedded arjs='debugUIEnabled: false; sourceType: webcam; patternRatio: 0.85; trackingMethod: best;'>
@@ -50,7 +58,14 @@ main()
     	</a-entity>
 	</a-scene>
 	</div>
-
+		<br>
+		<br>
+		<br>
+		<br>
+		<br>
+		<br>
+		<br>
+		<br>
 		<canvas id="gl-canvas" width="512"" height="512">
 		Oops ... your browser doesn't support the HTML5 canvas element
 		</canvas>
@@ -72,5 +87,5 @@ main()
 			<input id="10" placeholder="Mg의 개수 입력" style="display : none"></input>	
 			<input id="11" placeholder="Al의 개수 입력" style="display : none"></input>	
 		</form>			
-	</body>
+</body>
 </html>

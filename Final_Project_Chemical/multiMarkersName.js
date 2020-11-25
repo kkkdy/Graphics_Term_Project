@@ -70,6 +70,8 @@ AFRAME.registerComponent('registerevents', {
 				// marker pos = camera function
 				points = [];
 				colors = [];
+				// clear canvas
+				gl.clear( gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 				render_element(markerNum-1);		
 			});
 
