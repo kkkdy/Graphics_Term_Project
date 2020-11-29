@@ -8,45 +8,105 @@
 	 <script src="https://raw.githack.com/jeromeetienne/AR.js/2.0.8/aframe/build/aframe-ar.js"></script>
 	 <script src="multiMarkersName.js"></script>
 	 <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+	 <link rel="shortcut icon" href="#">
 <script id="vertex-shader" type="x-shader/x-vertex">
-attribute  vec4 vPosition;
-attribute  vec4 vColor;
-varying vec4 fColor;
+// assume both position and normal are in homogeneous form
+attribute vec4 vPosition;
+attribute vec3 vNormal;
+attribute vec4 spherePosition;
 uniform vec3 vLocation;
 
+varying vec4 fColor;
+
+varying vec3 N, L, E;
+varying float s,t;
+
+
 uniform mat4 modelViewMatrix;
+uniform mat4 projectionMatrix;
+uniform vec4 lightPosition;
+uniform mat3 normalMatrix;
+
 void main()
 {
-    gl_Position = modelViewMatrix* vPosition + vec4(vLocation , 0);
-    fColor = vColor;
+    // illumination computation
+	vec3 pos = (modelViewMatrix * vPosition).xyz;
+	
+	// check for directional light
+   // if(lightPosition.w == 0.0) L = normalize((modelViewMatrix*lightPosition).xyz);
+    //else L = normalize( (modelViewMatrix*lightPosition).xyz - pos );
+	
+	if(lightPosition.w == 0.0) L = normalize(lightPosition.xyz);
+    else L = normalize(lightPosition.xyz - pos );
+	
+	// Because the eye point the is at the orgin
+    // the vector from the vertex position to the eye is
+	E = -normalize(pos);
+	N = normalize(normalMatrix*vNormal.xyz);
+	
+    float pi = acos(0.0);
+    s = 0.5*acos(spherePosition.x)/pi;
+    t = 0.5*acos(spherePosition.y/sqrt(1.0-spherePosition.x*spherePosition.x))/pi;
+
+    gl_Position = modelViewMatrix * vPosition + vec4(vLocation , 0);
 }
 </script>
 
 <script id="fragment-shader" type="x-shader/x-fragment">
+uniform sampler2D texture;
 precision mediump float;
 
-varying vec4 fColor;
+varying float s,t;
+varying vec3 N, L, E;
+
+
+uniform vec4 ambientProduct, diffuseProduct, specularProduct;
+uniform float shininess;
 
 void
 main()
 {
-    gl_FragColor = fColor;
+
+	vec4 textColor = texture2D(texture, vec2(s,t));
+	
+    vec4 fColor;
+    // halfway vector
+    vec3 H = normalize( L + E );
+	
+    // Compute terms in the illumination equation
+    vec4 ambient = ambientProduct;
+	
+    float Cd = max( dot(L, N), 0.0 );
+    vec4  diffuse = Cd*diffuseProduct;
+
+    float Cs = pow( max(dot(N, H), 0.0), shininess );
+    vec4  specular = Cs * specularProduct;
+
+	if( dot(L, N) < 0.0 ) {
+		specular = vec4(0.0, 0.0, 0.0, 1.0);
+    }
+	fColor = ambient + diffuse +specular;
+
+    fColor.a = 1.0;
+
+    gl_FragColor = fColor * textColor * 0.7 + textColor * 0.3;
+    // gl_FragColor = fColor;
 }
 </script>
 
 <script type="text/javascript" src="Common/webgl-utils.js"></script>
 <script type="text/javascript" src="Common/initShaders.js"></script>
 <script type="text/javascript" src="Common/MV.js"></script>
-<script type="text/javascript" src="draw_geometry/geometry.js"></script>
-<script type="text/javascript" src="draw_geometry/molecule.js"></script>
+<script type="text/javascript" src="geometry.js"></script>
+<script type="text/javascript" src="molecule.js"></script>
 
 </head>	
 <body onmousemove="myFunction(event)">
 	<script>
 	/**** ****/
 	function myFunction(e) {
-		x = e.clientX;
-		y = e.clientY;
+			x = e.clientX;
+			y = e.clientY;
 	}
 	/**** ****/
 	</script>
@@ -66,26 +126,31 @@ main()
 		<br>
 		<br>
 		<br>
-		<canvas id="gl-canvas" width="512"" height="512">
-		Oops ... your browser doesn't support the HTML5 canvas element
-		</canvas>
-		<br>
-		<button id="make">Make chemical compound!</button>
-		<button id="reset" onclick="restart();">Reset all value!</button>
-		<br>
-		<form id="get_input">
-			<input id="0" placeholder="H의 개수 입력" style="display : none"></input>	
-			<input id="1" placeholder="He의 개수 입력" style="display : none"></input>	
-			<input id="2" placeholder="Li의 개수 입력" style="display : none"></input>	
-			<input id="3" placeholder="Be의 개수 입력" style="display : none"></input>	
-			<input id="4" placeholder="B의 개수 입력" style="display : none"></input>	
-			<input id="5" placeholder="C의 개수 입력" style="display : none"></input>	
-			<input id="6" placeholder="N의 개수 입력" style="display : none"></input>	
-			<input id="7" placeholder="O의 개수 입력" style="display : none"></input>	
-			<input id="8" placeholder="F의 개수 입력" style="display : none"></input>	
-			<input id="9" placeholder="Na의 개수 입력" style="display : none"></input>	
-			<input id="10" placeholder="Mg의 개수 입력" style="display : none"></input>	
-			<input id="11" placeholder="Al의 개수 입력" style="display : none"></input>	
-		</form>			
-</body>
-</html>
+      <div id='d1' style="position:absolute; top:10px; left:250px; z-index:1">  
+         <canvas id="gl-canvas" width="512"" height="512">
+            Your browser does not support HTML5 Canvas.
+         </canvas>
+      </div>
+      
+      <div id='d2' style="position:absolute; top:600px; left:0px; z-index:2">  
+         <br>
+         <button id="make">Make chemical compound!</button>
+         <button id="reset" onclick="restart();">Reset all value!</button>
+         <br>
+      </div>
+      <div id='d3' style="position:absolute; top:650px; left:0px; z-index:3">  
+         <form id="get_input">
+         <input id="0" placeholder="H의 개수 입력" style="display : none"></input>   
+         <input id="1" placeholder="He의 개수 입력" style="display : none"></input>   
+         <input id="2" placeholder="Li의 개수 입력" style="display : none"></input>   
+         <input id="3" placeholder="Be의 개수 입력" style="display : none"></input>   
+         <input id="4" placeholder="B의 개수 입력" style="display : none"></input>   
+         <input id="5" placeholder="C의 개수 입력" style="display : none"></input>   
+         <input id="6" placeholder="N의 개수 입력" style="display : none"></input>   
+         <input id="7" placeholder="O의 개수 입력" style="display : none"></input>   
+         <input id="8" placeholder="F의 개수 입력" style="display : none"></input>   
+         <input id="9" placeholder="Na의 개수 입력" style="display : none"></input>   
+         <input id="10" placeholder="Mg의 개수 입력" style="display : none"></input>   
+         <input id="11" placeholder="Al의 개수 입력" style="display : none"></input>   
+      </form>   
+      </div>

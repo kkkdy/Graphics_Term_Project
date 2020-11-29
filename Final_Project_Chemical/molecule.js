@@ -710,15 +710,15 @@ function render_CH4(){
    render_sphere(0, 0.0, -0.2, -0.25);
    render_sphere(0, 0.0, 0.4, 0.0);
 
-   render_cylinder(-0.08, 0.05, 0.05, 0, 0.3, 1, 120, 0.03, 0.5, 0.03);
+   render_cylinder(-0.08, -0.05, 0.05, 0, 0.3, 1, 130, 0.03, 0.5, 0.03);
    //linkCs1.rotate(120, [0, 0, 1]);
    //linkCs1.rotate(30, [0, 1, 0]);
    
-   render_cylinder(0.0, 0.05, -0.08, 0, 1, 0.45, 270, 0.03, 0.5, 0.03);
+   render_cylinder(0.0, -0.05, -0.08, 0, 1, 0.45, 190, 0.03, 0.5, 0.03);
    //linkCs2.rotate(120, [0, 0, 1]);
    //linkCs2.rotate(270, [0, 1, 0]);
    
-   render_cylinder(0.08, 0.05, 0.05, 0, 1, 0.8, 150, 0.03, 0.5, 0.03);
+   render_cylinder(0.08, -0.05, 0.05, 0.6, 0.5, 0.8, 200, 0.03, 0.5, 0.03);
    //linkCs3.rotate(120, [0, 0, 1]);
    //linkCs3.rotate(150, [0, 1, 0]);
     
@@ -826,15 +826,15 @@ function render_NH3(){
    render_sphere(0, -0.25, -0.07, 0.16);
    render_sphere(0, 0.0, -0.07, -0.25);
    
-   render_cylinder(-0.08, 0.05, 0.05, 0, 0.3, 1, 120, 0.03, 0.4, 0.03);
+   render_cylinder(-0.08, 0.05, 0.05, 0, 0.3, 1, 130, 0.03, 0.4, 0.03);
    //linkCs1.rotate(120, [0, 0, 1]);
     //linkCs1.rotate(30, [0, 1, 0]);
    
-   render_cylinder(0.0, 0.05, -0.08, 0, 1, 0.45, 270, 0.03, 0.4, 0.03);
+   render_cylinder(0.0, 0.05, -0.08, 0, 1, 0.45, 190, 0.03, 0.4, 0.03);
    //linkCs2.rotate(120, [0, 0, 1]);
     //linkCs2.rotate(270, [0, 1, 0]);
    
-   render_cylinder(0.08, 0.05, 0.05, 0, 1, 0.8, 150, 0.03, 0.4, 0.03);
+   render_cylinder(0.08, 0.05, 0.05, 0.6, 0.5, 0.8, 200, 0.03, 0.4, 0.03);
    //linkCs3.rotate(120, [0, 0, 1]);
     //linkCs3.rotate(150, [0, 1, 0]);
 
